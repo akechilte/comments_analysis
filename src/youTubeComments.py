@@ -5,7 +5,7 @@ import  pandas as pd
 # DF TO EXCEL
 from pandas import ExcelWriter
 
-DEVELOPER_KEY = "AIzaSyBrdaH0BNdxkWvu4y2ji8rQiWmGyQiv6Aw"
+DEVELOPER_KEY = ""
 YOUTUBE_API_SERVICE_NAME = "youtube"
 YOUTUBE_API_VERSION = "v3"
 
