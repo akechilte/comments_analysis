@@ -1,0 +1,13 @@
+.history
+target/
+
+#IntelliJ confi files
+*.iml
+.idea/
+
+#models
+*.model
+*.sav
+*.csv
+*.d2v
+
