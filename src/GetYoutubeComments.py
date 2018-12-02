@@ -97,7 +97,8 @@ def filter_comments(comments_df):
 
 def main():
     if len(sys.argv) < 5:
-        print("!!!!! Not enough arguments. You need to provide 3 arguments!!!!")
+        print("!!!!! Not enough arguments. You need to provide 4 arguments!!!!")
+        print("python GetYoutubeComments.py <Developer Key> <video headline> <output file name> <Number of video to look at>")
         sys.exit(1)
     DEVELOPER_KEY = sys.argv[1]
     search_string = sys.argv[2]
