@@ -8,15 +8,14 @@ from sys import argv
 # DF TO EXCEL
 from pandas import ExcelWriter
 
-DEVELOPER_KEY = ""
 YOUTUBE_API_SERVICE_NAME = "youtube"
 YOUTUBE_API_VERSION = "v3"
 
 
 
 
-def youtube_search(q, max_results=50, order="relevance", token=None, location=None, location_radius=None):
-    youtube = build(YOUTUBE_API_SERVICE_NAME, YOUTUBE_API_VERSION, developerKey=DEVELOPER_KEY)
+def youtube_search(q, developer_key, max_results=5, order="relevance", token=None, location=None, location_radius=None):
+    youtube = build(YOUTUBE_API_SERVICE_NAME, YOUTUBE_API_VERSION, developerKey=developer_key)
 
     search_response = youtube.search().list(
         q=q,
@@ -42,14 +41,22 @@ def youtube_search(q, max_results=50, order="relevance", token=None, location=No
     print(len(videoId))
     return videoId
 
+def clean_text(text):
+    '''
+    Utility function to clean the text in a tweet by removing 
+    links and special characters using regex.
+    '''
+    clean_text =  ' '.join(re.sub("(@[A-Za-z]+)|([^A-Za-z \t])|(\w+:\/\/\S+)", " ", text).split())
+    return clean_text
 
-def get_comment_threads(searchName):
+def get_comment_threads(searchName, max_results, developer_key):
     outputDF = pd.DataFrame([])
-    videoIds= youtube_search(searchName)
+    videoIds= youtube_search(searchName, developer_key)
+    print("videoIds count : {0}".format(len(videoIds)))
     #videoIds = ['PYN4H0JXBJc']
     for video_id in videoIds:
         youtube = build(YOUTUBE_API_SERVICE_NAME, YOUTUBE_API_VERSION,
-                        developerKey=DEVELOPER_KEY)
+                        developerKey=developer_key)
         results = youtube.commentThreads().list(
             part="snippet",
             videoId=video_id,
@@ -61,7 +68,7 @@ def get_comment_threads(searchName):
 
             createdTime = comment["snippet"]["publishedAt"]
             text = comment["snippet"]["textDisplay"]
-            cleanText = cleanComment(text)
+            cleanText = clean_text(text)
             # print("Comment by %s: at %s: %s" % (author, createdTime,text))
             outputDF=outputDF.append(pd.DataFrame({'videoID': video_id, 'CreateTimeStamp': createdTime, 'Comment': cleanText, 'Type': 'Comment'}, index=[0]),ignore_index=True)
 
@@ -74,32 +81,43 @@ def get_comment_threads(searchName):
 
             for item2 in results1["items"]:
                 text1 = item2["snippet"]["textDisplay"]
-                cleanText1 = cleanComment(text1)
+                cleanText1 = clean_text(text1)
                 createdTime1 = item2["snippet"]["publishedAt"]
                 outputDF=outputDF.append(pd.DataFrame({'videoID': video_id, 'CreateTimeStamp': createdTime1, 'Comment': cleanText1, 'Type': 'Reply'}, index=[0]),ignore_index=True)
         print(video_id)
     return outputDF
 
-def cleanComment(text):
-    text = text.lower()
-    text = re.sub(r'https?:\/\/.\/\w', '', text)
-    text = re.sub('@[^\s]+','',text)
-    text = re.sub(r'\&\w*;', '', text)
-    text = re.sub(r'\$\w*', '', text)
-    text = re.sub(r'#\w*', '', text)
-    text = re.sub(r'\b\w{1,2}\b', '', text)
-    text = re.sub(r'\s\s+', ' ', text)
-    text = re.sub(r'\n', ' ', text)
-    text = re.sub(r'\r', ' ', text)
-    text = ''.join(r for r in text if r <= '\uFFFF')
-    return text
+
+def filter_comments(comments_df):
+    df = comments_df[comments_df['Comment'].notnull()]
+    #filtered_df = df[df['Comment'].str.len() > 0]
+    filtered_df = df[df['Comment'].apply(lambda x: len(x.strip()) > 2)]
+    return filtered_df
+    
 
 def main():
-    SearchString = sys.argv[1]
+    if len(sys.argv) < 5:
+        print("!!!!! Not enough arguments. You need to provide 3 arguments!!!!")
+        sys.exit(1)
+    DEVELOPER_KEY = sys.argv[1]
+    search_string = sys.argv[2]
+    output_file_name = sys.argv[3]
+    max_results = sys.argv[4]
     #SearchString = 'Samsung VR HeadSet'
-    comments = get_comment_threads(searchName=SearchString)
-    comments.to_csv("SamsungVRHeadSet.csv", sep='\t', index=False)
+    #comments = get_comment_threads(searchName=search_string, developer_key=DEVELOPER_KEY,max_results=50)
+    #Testing
+    
+    comments = get_comment_threads(search_string, max_results, DEVELOPER_KEY)
+    comments_filtered = filter_comments(comments)
+    comments_filtered.to_csv(output_file_name, sep='\t', index=False)
+    
+    print("****End of execution****")
 
 
 if __name__ == "__main__":
+    """
+    python GetYoutubeComments.py <Developer Key> <video headline> <output file name> <Number of video to look at>
+    e.g.
+    python GetYoutubeComments.py <Developer Key> "taylor swift" tswift.csv 5
+    """
     main()
