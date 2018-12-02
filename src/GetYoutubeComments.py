@@ -104,10 +104,7 @@ def main():
     search_string = sys.argv[2]
     output_file_name = sys.argv[3]
     max_results = sys.argv[4]
-    #SearchString = 'Samsung VR HeadSet'
-    #comments = get_comment_threads(searchName=search_string, developer_key=DEVELOPER_KEY,max_results=50)
-    #Testing
-    
+    #SearchString = 'Samsung VR HeadSet'    
     comments = get_comment_threads(search_string, max_results, DEVELOPER_KEY)
     comments_filtered = filter_comments(comments)
     comments_filtered.to_csv(output_file_name, sep='\t', index=False)
