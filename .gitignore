@@ -8,6 +8,5 @@ target/
 #models
 *.model
 *.sav
-*.csv
 *.d2v
 
