@@ -14,7 +14,7 @@ YOUTUBE_API_VERSION = "v3"
 
 
 
-def youtube_search(q, developer_key, max_results=5, order="relevance", token=None, location=None, location_radius=None):
+def youtube_search(q, developer_key, max_results, order="relevance", token=None, location=None, location_radius=None):
     youtube = build(YOUTUBE_API_SERVICE_NAME, YOUTUBE_API_VERSION, developerKey=developer_key)
 
     search_response = youtube.search().list(
@@ -51,7 +51,7 @@ def clean_text(text):
 
 def get_comment_threads(searchName, max_results, developer_key):
     outputDF = pd.DataFrame([])
-    videoIds= youtube_search(searchName, developer_key)
+    videoIds= youtube_search(searchName, developer_key, max_results)
     print("videoIds count : {0}".format(len(videoIds)))
     #videoIds = ['PYN4H0JXBJc']
     for video_id in videoIds:
