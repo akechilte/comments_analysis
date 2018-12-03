@@ -84,9 +84,10 @@ def get_comment_threads(searchName, max_results, developer_key):
             for item2 in results1["items"]:
                 text1 = item2["snippet"]["textDisplay"]
                 cleanText1 = clean_text(text1)
+                cleanVideoTitle1 = clean_text(video_title)
                 createdTime1 = item2["snippet"]["publishedAt"]
                 outputDF = outputDF.append(pd.DataFrame(
-                    {'videoID': video_id, 'videoTitle': video_title,'CreateTimeStamp': createdTime1, 'Comment': cleanText1, 'Type': 'Reply'},
+                    {'videoID': video_id, 'videoTitle': cleanVideoTitle1,'CreateTimeStamp': createdTime1, 'Comment': cleanText1, 'Type': 'Reply'},
                     index=[0]), ignore_index=True)
         print(video_id)
     return outputDF
