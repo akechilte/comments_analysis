@@ -1,6 +1,6 @@
 # comments_analysis
 
-## seach strings
+## search strings
 1) Samsung VR HeadSet
 2) taylor swift
 3) Golden State Warriors
