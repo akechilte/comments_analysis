@@ -1,7 +1,7 @@
 from apiclient.discovery import build
 from oauth2client.tools import argparser
 import pandas as pd
-import sys
+import sys, os
 import string
 import re
 from sys import argv
@@ -110,10 +110,18 @@ def main():
     search_string = sys.argv[2]
     output_file_name = sys.argv[3]
     max_results = sys.argv[4]
+    
+    proj_root = os.path.dirname(os.getcwd())
+    outdata_subdir = 'indata'
+    outdata_dir = proj_root + "/" + outdata_subdir
+    output_path = outdata_dir + "/" + output_file_name
+    
+    print("output_path : {0}".format(output_path))
+    
     # SearchString = 'Samsung VR HeadSet'
     comments = get_comment_threads(search_string, max_results, DEVELOPER_KEY)
     comments_filtered = filter_comments(comments)
-    comments_filtered.to_csv(output_file_name, sep='\t', index=False)
+    comments_filtered.to_csv(output_path, sep='\t', index=False)
 
     print("****End of execution****")
 
