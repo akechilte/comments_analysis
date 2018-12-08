@@ -1,4 +1,4 @@
-# comments_analysis
+# YouTube Video Comments Analysis
 
 ## Overview
 Youtube Video Comments Sentiment Analysis and Spam Detection using Word2Vec model.
@@ -13,6 +13,8 @@ Youtube Video Comments Sentiment Analysis and Spam Detection using Word2Vec mode
 #### 3) Sports : Golden State Warriors, nfl highlights, roger federer vs rafael nadal, formula 1 2018, Super Bowl LI
 
 #### TV series : House of cards, game of thrones season 8, The Tonight show, The Big Bang Theory
+
+
 
 ## PROJECT EXECUTION INSTRUCTIONS
 
