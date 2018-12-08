@@ -16,9 +16,9 @@ import sys, os
 
 def SENTIMENT(filepath ):
     
-    path = filepath + "/" + "video_comments_analysis_sentiments.csv"
+    path = filepath + "/" +'video_comments_analysis_sentiments.csv'
     ''' Read the file data '''
-    df = pd.read_csv(path, sep='\t' ,names = ["Comment", "CommentID", "CreateTimeStamp", "Type", "videoID","videoTitle", "FNAME", "SENTIMENT_RF", "SENTIMENT_KN"])
+    df = pd.read_csv(path, sep='\t' ,names = ["Comment","CommentID", "CreateTimeStamp", "Type", "videoID","videoTitle", "FNAME", "SENTIMENT_RF", "SENTIMENT_KN"])
     df = df.iloc[1:]
     
     ''' Plot Comments Count chart '''
@@ -39,16 +39,12 @@ def SENTIMENT(filepath ):
     fig3 = plt.figure(figsize=(12,8))
     df1 = df.groupby(['videoID']).CreateTimeStamp.agg('count').to_frame('Count').reset_index().sort_values(by='Count', ascending=False).head(15) 
     df2= df[df['SENTIMENT_RF']=='1'].groupby(['videoID']).CreateTimeStamp.agg('count').to_frame('POSITIVE_SENT_RF').reset_index()
-    df3= df[df['SENTIMENT_KN']=='1'].groupby(['videoID']).CreateTimeStamp.agg('count').to_frame('POSITIVE_SENT_KN').reset_index()  
     df4= df[df['SENTIMENT_RF']=='0'].groupby(['videoID']).CreateTimeStamp.agg('count').to_frame('NEGATIVE_SENT_RF').reset_index()
-    df5= df[df['SENTIMENT_KN']=='0'].groupby(['videoID']).CreateTimeStamp.agg('count').to_frame('NEGATIVE_SENT_KN').reset_index()  
     df7 = pd.merge(df1[['videoID']], df2, on='videoID', how='inner')
-    df7 = pd.merge(df7, df3, on='videoID', how='inner')
     df7 = pd.merge(df7, df4, on='videoID', how='inner')
-    df7 = pd.merge(df7, df5, on='videoID', how='inner')
     df7 = df7.set_index('videoID')
 #    print(df7)
-    df7.plot(kind='bar',rot=45,width=.8,figsize=(12,8), color= ('b','g', 'r', 'k'))
+    df7.plot(kind='bar',rot=45,width=.8,figsize=(12,8), color= ('r', 'k'))
     plt.savefig('Sentiemnt_Analysis.png')
     
     
@@ -71,22 +67,18 @@ def SENTIMENT(filepath ):
     
 def Spam_data(filepath):  
     
-    path = filepath + "/" + "video_comments_analysis_spam.csv"
+    path = filepath + "/" +'video_comments_analysis_spam.csv'
     ''' Read the file data '''
-    df = pd.read_csv(path, sep='\t' ,names = ["Comment", "CommentID", "CreateTimeStamp", "Type", "videoID","videoTitle", "FNAME", "SPAM_IND_RF","SPAM_IND_KN"])
+    df = pd.read_csv(path, sep='\t' ,names = ["Comment","CommentID", "CreateTimeStamp", "Type", "videoID","videoTitle", "FNAME", "SPAM_IND_RF","SPAM_IND_KN"])
     df = df.iloc[1:]
     
     '''SPAM data analysis '''
     
     df1 = df.groupby(['videoID']).CreateTimeStamp.agg('count').to_frame('Count').reset_index().sort_values(by='Count', ascending=False).head(15) 
     df2= df[df['SPAM_IND_RF']=='1'].groupby(['videoID']).CreateTimeStamp.agg('count').to_frame('SPAM_RF').reset_index()
-    df3= df[df['SPAM_IND_KN']=='1'].groupby(['videoID']).CreateTimeStamp.agg('count').to_frame('SPAM_KN').reset_index()  
     df4= df[df['SPAM_IND_RF']=='0'].groupby(['videoID']).CreateTimeStamp.agg('count').to_frame('NON_SPAM_RF').reset_index()
-    df5= df[df['SPAM_IND_KN']=='0'].groupby(['videoID']).CreateTimeStamp.agg('count').to_frame('Non_SPAM_KN').reset_index()  
     df7 = pd.merge(df1[['videoID']], df2, on='videoID', how='inner')
-    df7 = pd.merge(df7, df3, on='videoID', how='inner')
     df7 = pd.merge(df7, df4, on='videoID', how='inner')
-    df7 = pd.merge(df7, df5, on='videoID', how='inner')
     df7 = df7.set_index('videoID')
 #    print(df7)
     df7.plot(kind='bar',rot=45,width=.8,figsize=(12,8))
@@ -98,40 +90,39 @@ def Spam_data(filepath):
     ''' venn deigram for true values '''
 
     
-    fig5 = plt.figure(figsize=(8,8))
+    fig5 = plt.figure(figsize=(10,10))
     df10 = df
     
     conditions = [
     (df10['SPAM_IND_KN'] == df10['SPAM_IND_RF']),
     (df10['SPAM_IND_KN'] == '1') & (df10['SPAM_IND_RF'] == '0'),
     (df10['SPAM_IND_KN'] == '0') & (df10['SPAM_IND_RF'] == '1')]
-    choices = ['Random Forest & KNeighbors', 'KNeighbors', 'Random Forest']
+    choices = ['RF & KN', 'KN', 'RF']
     df10['SPAM'] = np.select(conditions, choices, default='NA')
  #   df5 = df5.groupby(['SPAM']).CreateTimeStamp.agg('count').to_frame('Count').reset_index()
        
   #  print(df10)
-    df10.SPAM.value_counts().plot(kind='pie',  autopct='%.2f')
+    df10.SPAM.value_counts().plot(kind='pie',  autopct='%.2f',fontsize =20,rot=90)
     fig5.savefig('Pie_SPAM.png')
 
    
 def SENTIMENT_SPAM(filepath):
-    path1 = filepath + "/" + "video_comments_analysis_sentiments.csv"
-    fig7 = plt.figure(figsize=(12,8))
-    df = pd.read_csv(path1, sep='\t' ,names = ["Comment", "CommentID", "CreateTimeStamp", "Type", "videoID","videoTitle", "FNAME", "SENTIMENT_RF", "SENTIMENT_KN"])
+    path1 = filepath + "/" +'video_comments_analysis_sentiments.csv'
+    df = pd.read_csv(path1, sep='\t' ,names = ["Comment","CommentID", "CreateTimeStamp", "Type", "videoID","videoTitle", "FNAME", "SENTIMENT_RF", "SENTIMENT_KN"])
     df = df.iloc[1:]
     
-    path2 = filepath + "/" + "video_comments_analysis_spam.csv"
-    df3 = pd.read_csv(path2, sep='\t' ,names = ["Comment", "CommentID", "CreateTimeStamp", "Type", "videoID","videoTitle", "FNAME", "SPAM_IND_RF","SPAM_IND_KN"])
+    path2 = filepath + "/"  + 'video_comments_analysis_spam.csv'
+    df3 = pd.read_csv(path2, sep='\t' ,names = ["Comment","CommentID", "CreateTimeStamp", "Type", "videoID","videoTitle", "FNAME", "SPAM_IND_RF","SPAM_IND_KN"])
     df3 = df3.iloc[1:]
     
     df1 = df.groupby(['videoID']).CreateTimeStamp.agg('count').to_frame('Count').reset_index().sort_values(by='Count', ascending=False).head(15) 
-    df2 = df[df['SENTIMENT_KN']=='1'].groupby(['videoID']).CreateTimeStamp.agg('count').to_frame('SENTIMENT').reset_index()  
-    df3 = df3[df3['SPAM_IND_KN']=='1'].groupby(['videoID']).CreateTimeStamp.agg('count').to_frame('SPAM').reset_index()  
+    df2 = df[df['SENTIMENT_RF']=='1'].groupby(['videoID']).CreateTimeStamp.agg('count').to_frame('POSITIVE SENTIMENT RF').reset_index()  
+    df3 = df3[df3['SPAM_IND_RF']=='1'].groupby(['videoID']).CreateTimeStamp.agg('count').to_frame('SPAM COMMENT RF').reset_index()  
     df4 = pd.merge(df1[['videoID']], df2, on='videoID', how='inner') 
     df4 = pd.merge(df4, df3, on='videoID', how='inner')  
     print(df4)
     df4 = df4.set_index('videoID')
-    df4.plot(kind='bar',rot=45,width=.8,figsize=(12,8))
+    df4.plot(kind='bar',rot=45,width=.8,figsize=(12,8),color= ('b','g'))
     plt.savefig('Sentiment_SPAM_Analysis.png')
     
 # =============================================================================
@@ -151,10 +142,7 @@ def main():
     
 
     
-         
-   
-
-    
+        
 
     
 main()
