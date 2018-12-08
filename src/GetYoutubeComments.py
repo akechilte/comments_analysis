@@ -1,7 +1,7 @@
 from apiclient.discovery import build
 from oauth2client.tools import argparser
 import pandas as pd
-import sys, os
+import sys
 import string
 import re
 from sys import argv
@@ -69,9 +69,10 @@ def get_comment_threads(searchName, max_results, developer_key):
             createdTime = comment["snippet"]["publishedAt"]
             text = comment["snippet"]["textDisplay"]
             cleanText = clean_text(text)
+            commentID = item['id']
             # print("Comment by %s: at %s: %s" % (author, createdTime,text))
             outputDF = outputDF.append(pd.DataFrame(
-                {'videoID': video_id,'videoTitle': video_title, 'CreateTimeStamp': createdTime, 'Comment': cleanText, 'Type': 'Comment'},
+                {'videoID': video_id,'videoTitle': video_title, 'CreateTimeStamp': createdTime, 'Comment': cleanText, 'Type': 'Comment', 'CommentID': commentID},
                 index=[0]), ignore_index=True)
 
         for item1 in results["items"]:
@@ -84,10 +85,10 @@ def get_comment_threads(searchName, max_results, developer_key):
             for item2 in results1["items"]:
                 text1 = item2["snippet"]["textDisplay"]
                 cleanText1 = clean_text(text1)
-                cleanVideoTitle1 = clean_text(video_title)
                 createdTime1 = item2["snippet"]["publishedAt"]
+                replyID = item2['id']
                 outputDF = outputDF.append(pd.DataFrame(
-                    {'videoID': video_id, 'videoTitle': cleanVideoTitle1,'CreateTimeStamp': createdTime1, 'Comment': cleanText1, 'Type': 'Reply'},
+                    {'videoID': video_id, 'videoTitle': video_title,'CreateTimeStamp': createdTime1, 'Comment': cleanText1, 'Type': 'Reply', 'CommentID': replyID},
                     index=[0]), ignore_index=True)
         print(video_id)
     return outputDF
@@ -110,18 +111,10 @@ def main():
     search_string = sys.argv[2]
     output_file_name = sys.argv[3]
     max_results = sys.argv[4]
-    
-    proj_root = os.path.dirname(os.getcwd())
-    outdata_subdir = 'indata'
-    outdata_dir = proj_root + "/" + outdata_subdir
-    output_path = outdata_dir + "/" + output_file_name
-    
-    print("output_path : {0}".format(output_path))
-    
     # SearchString = 'Samsung VR HeadSet'
     comments = get_comment_threads(search_string, max_results, DEVELOPER_KEY)
     comments_filtered = filter_comments(comments)
-    comments_filtered.to_csv(output_path, sep='\t', index=False)
+    comments_filtered.to_csv(output_file_name, sep='\t', index=False)
 
     print("****End of execution****")
 
