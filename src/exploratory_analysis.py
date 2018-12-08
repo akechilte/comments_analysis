@@ -10,14 +10,15 @@ import pandas as pd
 import seaborn as sns
 import numpy as np
 from matplotlib_venn import venn2
+import sys, os
 
 
 
 def SENTIMENT(filepath ):
     
-    path = filepath +'\\video_comments_analysis_sentiments.csv'
+    path = filepath + "/" + "video_comments_analysis_sentiments.csv"
     ''' Read the file data '''
-    df = pd.read_csv(path, sep='\t' ,names = ["Comment", "CreateTimeStamp", "Type", "videoID","videoTitle", "FNAME", "SENTIMENT_RF", "SENTIMENT_KN"])
+    df = pd.read_csv(path, sep='\t' ,names = ["Comment", "CommentID", "CreateTimeStamp", "Type", "videoID","videoTitle", "FNAME", "SENTIMENT_RF", "SENTIMENT_KN"])
     df = df.iloc[1:]
     
     ''' Plot Comments Count chart '''
@@ -70,9 +71,9 @@ def SENTIMENT(filepath ):
     
 def Spam_data(filepath):  
     
-    path = filepath +'\\video_comments_analysis_spam.csv'
+    path = filepath + "/" + "video_comments_analysis_spam.csv"
     ''' Read the file data '''
-    df = pd.read_csv(path, sep='\t' ,names = ["Comment", "CreateTimeStamp", "Type", "videoID","videoTitle", "FNAME", "SPAM_IND_RF","SPAM_IND_KN"])
+    df = pd.read_csv(path, sep='\t' ,names = ["Comment", "CommentID", "CreateTimeStamp", "Type", "videoID","videoTitle", "FNAME", "SPAM_IND_RF","SPAM_IND_KN"])
     df = df.iloc[1:]
     
     '''SPAM data analysis '''
@@ -114,13 +115,13 @@ def Spam_data(filepath):
 
    
 def SENTIMENT_SPAM(filepath):
-    path1 =filepath +'\\video_comments_analysis_sentiments.csv'
+    path1 = filepath + "/" + "video_comments_analysis_sentiments.csv"
     fig7 = plt.figure(figsize=(12,8))
-    df = pd.read_csv(path1, sep='\t' ,names = ["Comment", "CreateTimeStamp", "Type", "videoID","videoTitle", "FNAME", "SENTIMENT_RF", "SENTIMENT_KN"])
+    df = pd.read_csv(path1, sep='\t' ,names = ["Comment", "CommentID", "CreateTimeStamp", "Type", "videoID","videoTitle", "FNAME", "SENTIMENT_RF", "SENTIMENT_KN"])
     df = df.iloc[1:]
     
-    path2 = filepath +'\\video_comments_analysis_spam.csv'
-    df3 = pd.read_csv(path2, sep='\t' ,names = ["Comment", "CreateTimeStamp", "Type", "videoID","videoTitle", "FNAME", "SPAM_IND_RF","SPAM_IND_KN"])
+    path2 = filepath + "/" + "video_comments_analysis_spam.csv"
+    df3 = pd.read_csv(path2, sep='\t' ,names = ["Comment", "CommentID", "CreateTimeStamp", "Type", "videoID","videoTitle", "FNAME", "SPAM_IND_RF","SPAM_IND_KN"])
     df3 = df3.iloc[1:]
     
     df1 = df.groupby(['videoID']).CreateTimeStamp.agg('count').to_frame('Count').reset_index().sort_values(by='Count', ascending=False).head(15) 
@@ -137,9 +138,12 @@ def SENTIMENT_SPAM(filepath):
 def main():
     
     ''' provide file path'''
-    print("Plese provide the output file path (like c:\\Users \\USER\\) :")
-    filepath = input()
-    ''' Call functions from main function '''
+    proj_root = os.path.dirname(os.getcwd())
+    
+    outdata_subdir = 'outdata'
+    
+    filepath = proj_root + "/" + outdata_subdir
+    
     SENTIMENT(filepath )
     Spam_data(filepath)
     SENTIMENT_SPAM(filepath)

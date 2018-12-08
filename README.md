@@ -55,7 +55,7 @@ Run SentimentAnalysis-pred.ipynb
 Run SpamDetection-pred.ipynb
 
 #### 7. Generate  Visualization
-exploratoryanalysis.py <Provide outdata folder path>
+python exploratoryanalysis.py
 
 
 
