@@ -6,7 +6,7 @@ target/
 .idea/
 
 #models
-*.model
+#*.model
 *.sav
 *.d2v
 
